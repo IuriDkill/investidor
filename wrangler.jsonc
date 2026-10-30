@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "investidor",
+  "compatibility_date": "2026-10-01",
+  // Static site only: Cloudflare serves the Vite build straight from its edge, no Worker script needed.
+  // Custom domain: Cloudflare creates the DNS record and HTTPS certificate on deploy.
+  "routes": [
+    { "pattern": "investimento.mundstock.dev.br", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

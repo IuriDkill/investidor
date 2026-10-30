@@ -5,6 +5,7 @@ import GrowthChart from '@/components/GrowthChart';
 import ResultCards from '@/components/ResultCards';
 import SelectField from '@/components/SelectField';
 import { FIELD_LIMITS } from '@/config/rates';
+import { DEFAULT_ASSUMPTIONS, type Assumptions } from '@/lib/assumptions';
 import { formatCurrency } from '@/lib/format';
 import { parseInRange } from '@/lib/validate';
 import { simulateVariableIncome, type VariableAsset } from '@/lib/variableIncome';
@@ -28,7 +29,15 @@ const parseAppreciation = (text: string) =>
   parseInRange(text, FIELD_LIMITS.appreciationMin, FIELD_LIMITS.percentMax);
 const parseDividends = (text: string) => parseInRange(text, 0, FIELD_LIMITS.percentMax);
 
-export default function VariableIncomeTab() {
+type VariableIncomeTabProps = {
+  assumptions?: Assumptions | null;
+  onOpenAssumptions?: () => void;
+};
+
+export default function VariableIncomeTab({
+  assumptions = DEFAULT_ASSUMPTIONS,
+  onOpenAssumptions,
+}: VariableIncomeTabProps) {
   const [common, setCommon] = useState(DEFAULT_COMMON_VALUES);
   const [asset, setAsset] = useState<VariableAsset>('acoes');
   const [appreciation, setAppreciation] = useState('');
@@ -40,7 +49,7 @@ export default function VariableIncomeTab() {
     const appreciationValue = parseAppreciation(appreciation);
     const dividendValue = parseDividends(dividends);
 
-    if (!base || appreciationValue === null || dividendValue === null) return null;
+    if (!base || !assumptions || appreciationValue === null || dividendValue === null) return null;
 
     return simulateVariableIncome({
       ...base,
@@ -48,8 +57,9 @@ export default function VariableIncomeTab() {
       appreciationAnnual: appreciationValue / 100,
       dividendAnnual: dividendValue / 100,
       reinvestDividends,
+      rules: assumptions.rules,
     });
-  }, [common, asset, appreciation, dividends, reinvestDividends]);
+  }, [common, asset, appreciation, dividends, reinvestDividends, assumptions]);
 
   const scenarioEmpty = appreciation.trim() === '' || dividends.trim() === '';
   const hasLoss = result !== null && result.grossGain < 0;
@@ -82,6 +92,9 @@ export default function VariableIncomeTab() {
       </section>
 
       <form className={styles.form} onSubmit={(event) => event.preventDefault()}>
+        <button type="button" className={styles.assumptionsButton} onClick={onOpenAssumptions}>
+          Premissas
+        </button>
         <SelectField
           label="Ativo"
           value={asset}
@@ -140,9 +153,11 @@ export default function VariableIncomeTab() {
         </>
       ) : (
         <p className={styles.empty}>
-          {scenarioEmpty
-            ? 'Preencha a valorização e os dividendos esperados para ver o resultado.'
-            : 'Corrija os campos destacados para ver o resultado.'}
+          {!assumptions
+            ? 'Corrija os campos em Premissas para ver o resultado.'
+            : scenarioEmpty
+              ? 'Preencha a valorização e os dividendos esperados para ver o resultado.'
+              : 'Corrija os campos destacados para ver o resultado.'}
         </p>
       )}
 

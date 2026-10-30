@@ -4,6 +4,10 @@ test('converte taxa anual em mensal equivalente', () => {
   expect(monthlyRate(0.12)).toBeCloseTo(0.0094888, 6)
 })
 
+test('usa as alíquotas informadas', () => {
+  expect(incomeTaxRate(200, [0.1, 0.05, 0.02, 0])).toBe(0.05)
+})
+
 test.each([
   [180, 0.225],
   [181, 0.2],

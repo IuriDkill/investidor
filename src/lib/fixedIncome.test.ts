@@ -1,3 +1,5 @@
+import { DEFAULT_TAX_RULES } from './assumptions'
+import type { IrRates } from './finance'
 import { simulateFixedIncome, type FixedIncomeInput } from './fixedIncome'
 
 const base: FixedIncomeInput = {
@@ -62,6 +64,24 @@ test('caixinha rende o percentual do CDI e paga IR como o CDB', () => {
   expect(r.grossGain).toBeCloseTo(144, 6)
   expect(r.tax).toBeCloseTo(28.8, 6)
   expect(r.net).toBeCloseTo(1115.2, 6)
+})
+
+test('usa as alíquotas de IR das regras', () => {
+  const rules = { ...DEFAULT_TAX_RULES, irRates: [0.5, 0.1, 0.1, 0.1] as IrRates }
+  const r = simulateFixedIncome({ ...base, months: 6, rules })
+  expect(r.tax).toBeCloseTo(r.grossGain * 0.5, 6)
+})
+
+test('usa a regra de poupança acima do corte', () => {
+  const rules = { ...DEFAULT_TAX_RULES, savingsMonthlyAbove: 0.01 }
+  const r = simulateFixedIncome({ ...base, product: 'poupanca', selicAnnual: 0.1375, rules })
+  expect(r.net).toBeCloseTo(1000 * 1.01 ** 12, 6)
+})
+
+test('usa a regra de poupança até o corte', () => {
+  const rules = { ...DEFAULT_TAX_RULES, savingsSelicThreshold: 0.2, savingsSelicShare: 0.5 }
+  const r = simulateFixedIncome({ ...base, product: 'poupanca', selicAnnual: 0.12, rules })
+  expect(r.net).toBeCloseTo(1000 * 1.005 ** 12, 6)
 })
 
 test('Tesouro IPCA+ compõe inflação e juro real', () => {

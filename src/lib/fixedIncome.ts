@@ -1,3 +1,4 @@
+import { DEFAULT_TAX_RULES, type TaxRules } from './assumptions';
 import { incomeTaxRate, monthlyRate } from './finance';
 
 export type SimulationPoint = { month: number; invested: number; gross: number };
@@ -14,6 +15,7 @@ export type FixedIncomeInput = {
   selicAnnual: number;
   ipcaAnnual: number;
   realAnnual: number;
+  rules?: TaxRules;
 };
 
 export type FixedIncomeResult = {
@@ -24,7 +26,7 @@ export type FixedIncomeResult = {
   series: SimulationPoint[];
 };
 
-function monthlyYield(input: FixedIncomeInput) {
+function monthlyYield(input: FixedIncomeInput, rules: TaxRules) {
   switch (input.product) {
     case 'cdb':
     case 'lci-lca':
@@ -35,18 +37,20 @@ function monthlyYield(input: FixedIncomeInput) {
     case 'tesouro-ipca':
       return monthlyRate((1 + input.ipcaAnnual) * (1 + input.realAnnual) - 1);
     case 'poupanca':
-      return input.selicAnnual > 0.085 ? 0.005 : (0.7 * input.selicAnnual) / 12;
+      return input.selicAnnual > rules.savingsSelicThreshold
+        ? rules.savingsMonthlyAbove
+        : (rules.savingsSelicShare * input.selicAnnual) / 12;
   }
 }
 
 export function simulateFixedIncome(input: FixedIncomeInput): FixedIncomeResult {
-  const { product, initial, monthly, months } = input;
-  const rate = monthlyYield(input);
+  const { product, initial, monthly, months, rules = DEFAULT_TAX_RULES } = input;
+  const rate = monthlyYield(input, rules);
   const taxExempt = product === 'lci-lca' || product === 'poupanca';
 
   // Cada aplicação é um lote: a idade dele define a alíquota do seu rendimento.
   const lotTax = (amount: number, age: number) =>
-    taxExempt ? 0 : amount * (Math.pow(1 + rate, age) - 1) * incomeTaxRate(age * 30);
+    taxExempt ? 0 : amount * (Math.pow(1 + rate, age) - 1) * incomeTaxRate(age * 30, rules.irRates);
 
   let tax = lotTax(initial, months);
   let invested = initial;

@@ -1,3 +1,4 @@
+import { DEFAULT_TAX_RULES, type TaxRules } from './assumptions';
 import { monthlyRate } from './finance';
 import type { SimulationPoint } from './fixedIncome';
 
@@ -11,6 +12,7 @@ export type VariableIncomeInput = {
   appreciationAnnual: number;
   dividendAnnual: number;
   reinvestDividends: boolean;
+  rules?: TaxRules;
 };
 
 export type VariableIncomeResult = {
@@ -23,19 +25,15 @@ export type VariableIncomeResult = {
   series: SimulationPoint[];
 };
 
-const STOCK_EXEMPTION_LIMIT = 20000;
-const STOCK_TAX_RATE = 0.15;
-const FII_TAX_RATE = 0.2;
-
-export function saleTax(asset: VariableAsset, position: number, cost: number) {
+export function saleTax(asset: VariableAsset, position: number, cost: number, rules = DEFAULT_TAX_RULES) {
   const profit = position - cost;
   if (profit <= 0) return 0;
-  if (asset === 'fiis') return profit * FII_TAX_RATE;
-  return position > STOCK_EXEMPTION_LIMIT ? profit * STOCK_TAX_RATE : 0;
+  if (asset === 'fiis') return profit * rules.fiiTaxRate;
+  return position > rules.stockExemptionLimit ? profit * rules.stockTaxRate : 0;
 }
 
 export function simulateVariableIncome(input: VariableIncomeInput): VariableIncomeResult {
-  const { asset, initial, monthly, months, appreciationAnnual, dividendAnnual, reinvestDividends } = input;
+  const { asset, initial, monthly, months, appreciationAnnual, dividendAnnual, reinvestDividends, rules } = input;
   const rate = monthlyRate(appreciationAnnual);
 
   let position = initial;
@@ -67,6 +65,6 @@ export function simulateVariableIncome(input: VariableIncomeInput): VariableInco
   }
 
   const gross = position + cash;
-  const tax = saleTax(asset, position, cost);
+  const tax = saleTax(asset, position, cost, rules);
   return { invested, grossGain: gross - invested, tax, net: gross - tax, appreciationGain, dividends, series };
 }

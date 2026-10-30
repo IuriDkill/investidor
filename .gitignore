@@ -16,3 +16,4 @@ dist-ssr
 .env
 
 .superpowers
+.wrangler

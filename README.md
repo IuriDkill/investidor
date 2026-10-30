@@ -17,6 +17,15 @@ npm run lint      # lint
 npm run build     # build de produção
 ```
 
+## Deploy
+
+O site é publicado na Cloudflare em `investimento.mundstock.dev.br`, conforme `wrangler.jsonc`.
+
+```bash
+npx wrangler login   # só na primeira vez
+npm run deploy
+```
+
 ## Atualizar as taxas
 
 As taxas iniciais dos campos e o mês de referência ficam em `src/config/rates.ts`.

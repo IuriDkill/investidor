@@ -1,3 +1,4 @@
+import { DEFAULT_TAX_RULES } from './assumptions'
 import { saleTax, simulateVariableIncome, type VariableIncomeInput } from './variableIncome'
 
 const base: VariableIncomeInput = {
@@ -21,6 +22,13 @@ describe('saleTax', () => {
 
   test('FIIs pagam 20% em qualquer valor', () => {
     expect(saleTax('fiis', 1000, 500)).toBeCloseTo(100, 6)
+  })
+
+  test('usa as regras informadas', () => {
+    const rules = { ...DEFAULT_TAX_RULES, stockTaxRate: 0.1, fiiTaxRate: 0.3, stockExemptionLimit: 500 }
+    expect(saleTax('acoes', 1000, 500, rules)).toBeCloseTo(50, 6)
+    expect(saleTax('acoes', 500, 400, rules)).toBe(0)
+    expect(saleTax('fiis', 1000, 500, rules)).toBeCloseTo(150, 6)
   })
 
   test('prejuízo não paga imposto', () => {
@@ -55,6 +63,18 @@ test('perda em FIIs não paga imposto', () => {
   expect(r.grossGain).toBeCloseTo(-2000, 6)
   expect(r.appreciationGain).toBeCloseTo(-2000, 6)
   expect(r.tax).toBe(0)
+})
+
+test('a simulação repassa as regras', () => {
+  const rules = { ...DEFAULT_TAX_RULES, stockTaxRate: 0.1 }
+  const r = simulateVariableIncome({
+    ...base,
+    initial: 30000,
+    dividendAnnual: 0,
+    appreciationAnnual: 0.1,
+    rules,
+  })
+  expect(r.tax).toBeCloseTo(300, 6)
 })
 
 test('ganho em ações acima do limite paga imposto', () => {

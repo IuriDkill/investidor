@@ -10,7 +10,7 @@ Sucesso significa que um iniciante entende a explicação, preenche poucos campo
 
 ## Fora do escopo
 
-- Login, contas ou dados salvos (exceto a preferência de tema).
+- Login, contas ou dados salvos (exceto a preferência de tema e as alterações em Premissas).
 - Taxas atualizadas por API.
 - Inglês ou outros idiomas.
 - Deploy.
@@ -56,11 +56,17 @@ Cada aba tem, nesta ordem: explicação, formulário, cartões de resultado, gr�
 
 As abas usam `role="tablist"`, `tab` e `tabpanel`, com navegação pelas setas do teclado. Trocar de aba não apaga o que foi preenchido.
 
+### Premissas
+
+Modal aberto pelo botão "Premissas", que fica no início do formulário de cada aba, acima de Produto e de Ativo. O conteúdo é o mesmo nas duas abas. Fecha pelo botão de fechar, pela tecla Esc ou com um clique fora dele. Permite editar CDI, Selic, IPCA, as quatro alíquotas de IR da renda fixa, os percentuais de IR de ações e FIIs, o limite de isenção em ações e os três valores da regra da poupança. CDI, Selic e IPCA ficam só neste modal; as tabelas de campos abaixo indicam de onde cada taxa vem.
+
+As alterações valem só no navegador do visitante e ficam em `localStorage`. Apenas os campos diferentes do padrão são salvos, para novos padrões chegarem a quem não os alterou. O botão "Restaurar padrões" volta a todos os valores. Uma premissa inválida mostra erro no campo e oculta os resultados das duas abas. As faixas de dias do IR não são editáveis, e os textos explicativos continuam descrevendo as regras padrão.
+
 ### Campos comuns
 
 | Campo | Regra | Valor inicial do campo |
 |---|---|---|
-| Valor inicial (R$) | 0 a 1.000.000.000 | 1.000 |
+| Valor inicial (R$) | 0 a 1.000.000.000 | 2.000 |
 | Aporte mensal (R$) | 0 a 1.000.000.000 | 200 |
 | Prazo | 1 a 600 meses, informado em meses ou anos | 5 anos |
 

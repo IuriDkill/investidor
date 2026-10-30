@@ -1,0 +1,105 @@
+.dialog {
+    width: min(760px, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-hover);
+}
+
+.dialog::backdrop {
+    background: rgb(0 0 0 / 0.6);
+}
+
+.content {
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 1.3rem;
+    line-height: 1.2;
+}
+
+.close {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    transition: border-color 200ms ease, color 200ms ease;
+}
+
+.close:hover {
+    color: var(--accent-ink);
+    border-color: var(--accent-ink);
+}
+
+.closeIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.note {
+    margin-top: 0.25rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.group {
+    min-width: 0;
+    margin-top: 1.25rem;
+    border: 0;
+}
+
+.legend {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    align-items: end;
+    gap: 0.85rem;
+}
+
+.reset {
+    margin-top: 1.25rem;
+    padding: 0.55rem 0.95rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: var(--r-sm);
+    font-size: 0.9rem;
+    transition: border-color 200ms ease, color 200ms ease;
+}
+
+.reset:hover {
+    color: var(--accent-ink);
+    border-color: var(--accent-ink);
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: 1rem 1.1rem 1.25rem;
+    }
+}

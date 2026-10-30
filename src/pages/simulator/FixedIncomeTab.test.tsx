@@ -13,7 +13,7 @@ const replace = async (label: string, text: string) => {
 
 test('mostra o resultado com os valores iniciais', () => {
   render(<FixedIncomeTab />)
-  expect(card('Total investido')).toHaveTextContent('13.000,00')
+  expect(card('Total investido')).toHaveTextContent('14.000,00')
   expect(card('Ganho bruto')).toBeInTheDocument()
   expect(card('Imposto')).toBeInTheDocument()
   expect(card('Valor líquido')).toBeInTheDocument()
@@ -39,16 +39,16 @@ test('indica os valores de exemplo', async () => {
 })
 
 test.each([
-  ['CDB', ['Percentual do CDI', 'CDI anual']],
-  ['LCI/LCA', ['Percentual do CDI', 'CDI anual']],
-  ['Caixinha', ['Percentual do CDI', 'CDI anual']],
-  ['Tesouro Selic', ['Selic anual']],
-  ['Tesouro IPCA+', ['IPCA anual', 'Juro real anual']],
-  ['Poupança', ['Selic anual']],
-])('%s mostra só as próprias taxas', async (product, visible) => {
+  ['CDB', ['Percentual do CDI']],
+  ['LCI/LCA', ['Percentual do CDI']],
+  ['Caixinha', ['Percentual do CDI']],
+  ['Tesouro Selic', []],
+  ['Tesouro IPCA+', ['Juro real anual']],
+  ['Poupança', []],
+])('%s mostra só as próprias taxas', async (product, visible: string[]) => {
   render(<FixedIncomeTab />)
   await choose(product)
-  for (const label of ['Percentual do CDI', 'CDI anual', 'Selic anual', 'IPCA anual', 'Juro real anual']) {
+  for (const label of ['Percentual do CDI', 'Juro real anual']) {
     expect(screen.queryByLabelText(label) !== null).toBe(visible.includes(label))
   }
 })
@@ -71,8 +71,24 @@ test('valor inicial e aporte zerados ocultam o resultado', async () => {
 
 test('taxa ainda sendo digitada continua calculando', async () => {
   render(<FixedIncomeTab />)
-  await replace('CDI anual', '13,')
+  await replace('Percentual do CDI', '13,')
   expect(card('Valor líquido')).toBeInTheDocument()
+})
+
+test.each([
+  ['CDB', /CDI de 13,65%/],
+  ['Tesouro Selic', /Selic de 13,75%/],
+  ['Tesouro IPCA+', /IPCA de 5,2%/],
+])('%s informa a taxa usada', async (product, note) => {
+  render(<FixedIncomeTab />)
+  await choose(product)
+  expect(screen.getByText(note)).toBeInTheDocument()
+})
+
+test('premissas inválidas ocultam o resultado', () => {
+  render(<FixedIncomeTab assumptions={null} />)
+  expect(card('Valor líquido')).toBeUndefined()
+  expect(screen.getByText(/Corrija os campos em Premissas/)).toBeInTheDocument()
 })
 
 test('prazo em anos fora do limite mostra erro', async () => {

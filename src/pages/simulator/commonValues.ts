@@ -4,7 +4,7 @@ import { parseInRange, toMonths, type TermUnit } from '@/lib/validate';
 export type CommonValues = { initial: string; monthly: string; term: string; unit: TermUnit };
 export type CommonErrors = { initial?: string; monthly?: string; term?: string };
 
-export const DEFAULT_COMMON_VALUES: CommonValues = { initial: '1.000', monthly: '200', term: '5', unit: 'years' };
+export const DEFAULT_COMMON_VALUES: CommonValues = { initial: '2.000', monthly: '200', term: '5', unit: 'years' };
 
 const parseAmount = (text: string) => parseInRange(text, 0, FIELD_LIMITS.amountMax);
 

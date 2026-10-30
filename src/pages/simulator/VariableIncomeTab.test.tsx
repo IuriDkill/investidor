@@ -23,7 +23,7 @@ test('pede o cenário antes de mostrar resultado', () => {
 test('mostra o resultado depois de preenchido', async () => {
   render(<VariableIncomeTab />)
   await fill('8', '6')
-  expect(card('Total investido')).toHaveTextContent('13.000,00')
+  expect(card('Total investido')).toHaveTextContent('14.000,00')
   expect(card('Ganho bruto')).toBeInTheDocument()
   expect(card('Imposto')).toBeInTheDocument()
   expect(card('Valor líquido')).toBeInTheDocument()
