@@ -1,0 +1,21 @@
+.disclaimer {
+    padding: 1.1rem 1.25rem;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: var(--r-md);
+    font-size: 0.9rem;
+}
+
+.title {
+    margin-bottom: 0.4rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-left: 1.1rem;
+}

@@ -1,0 +1,89 @@
+.tab {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.intro,
+.form {
+    padding: 1.4rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    border-color: rgb(var(--accent-rgb) / 0.25);
+}
+
+.introTitle {
+    font-size: 1.3rem;
+    line-height: 1.2;
+}
+
+.introList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-left: 1.1rem;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    align-items: start;
+    gap: 1rem;
+}
+
+.term {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.formNote {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    align-self: end;
+    font-size: 0.95rem;
+}
+
+.check input {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--accent);
+}
+
+.empty {
+    padding: 1.25rem;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: var(--r-md);
+    text-align: center;
+}
+
+.breakdown {
+    overflow-wrap: anywhere;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+    .intro,
+    .form {
+        padding: 1.1rem;
+    }
+}

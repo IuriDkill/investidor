@@ -1,0 +1,136 @@
+.figure {
+    min-width: 0;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+.caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.title {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    list-style: none;
+}
+
+.legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.swatch {
+    width: 1.1rem;
+    border-top: 2px solid;
+}
+
+.swatchGross {
+    border-color: var(--chart-gross);
+}
+
+.swatchInvested {
+    border-top-style: dashed;
+    border-color: var(--chart-invested);
+}
+
+.plot {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.plot svg {
+    display: block;
+}
+
+.grid {
+    stroke: var(--border);
+}
+
+.axis {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+.lineGross,
+.lineInvested {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.lineGross {
+    stroke: var(--chart-gross);
+}
+
+.lineInvested {
+    stroke: var(--chart-invested);
+    stroke-dasharray: 6 5;
+}
+
+.crosshair {
+    stroke: var(--muted);
+}
+
+.dotGross,
+.dotInvested {
+    stroke: var(--bg-elevated);
+    stroke-width: 2;
+}
+
+.dotGross {
+    fill: var(--chart-gross);
+}
+
+.dotInvested {
+    fill: var(--chart-invested);
+}
+
+.hitArea {
+    fill: transparent;
+    touch-action: pan-y;
+}
+
+.tooltip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    box-shadow: var(--shadow);
+    font-size: 0.8rem;
+    width: max-content;
+    max-width: 100%;
+    pointer-events: none;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

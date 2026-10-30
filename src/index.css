@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  background:
+    radial-gradient(circle at top left, rgb(var(--accent-rgb) / 0.12), transparent 32%),
+    radial-gradient(circle at bottom right, rgb(var(--violet-rgb) / 0.08), transparent 38%),
+    var(--bg);
+  color: var(--text);
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+#root {
+  width: 100%;
+  overflow-x: clip;
+  margin: 0 auto;
+}
+
+/* Light theme. Dark (deep blue) is the default, see index.html. */
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: var(--text);
+  font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  /* Channel tokens: components compose them as rgb(var(--x-rgb) / alpha). */
+  --text-rgb: 14 24 42;
+  --overlay-rgb: 14 24 42;
+  --surface-rgb: 255 255 255;
+  --shadow-rgb: 20 38 70;
+  --shadow-strength: 0.5;
+  --accent-rgb: 29 94 216;
+  --violet-rgb: 98 84 214;
+
+  --bg: #f2f5fa;
+  --bg-elevated: #ffffff;
+  --surface: rgb(var(--surface-rgb) / 0.8);
+  --border: rgb(var(--overlay-rgb) / 0.1);
+  --text: rgb(var(--text-rgb));
+  --muted: rgb(var(--text-rgb) / 0.7);
+  --accent: #1d5ed8;
+  --accent-strong: #15459f;
+  --accent-ink: #1a56c4;
+  --on-accent: #ffffff;
+  --danger: #c2352b;
+  --chart-gross: #1a8fd0;
+  --chart-invested: #6254d6;
+  --accent-gradient: linear-gradient(90deg, #1a56c4, #1a8fd0 50%, #6254d6);
+
+
+  --r-lg: 1.75rem;
+  --r-md: 1.25rem;
+  --r-sm: 0.85rem;
+
+  --shadow: 0 26px 50px rgb(var(--shadow-rgb) / calc(0.22 * var(--shadow-strength)));
+  --shadow-hover: 0 30px 60px rgb(var(--shadow-rgb) / calc(0.3 * var(--shadow-strength)));
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --text-rgb: 226 234 245;
+  --overlay-rgb: 226 234 245;
+  --surface-rgb: 15 22 34;
+  --shadow-rgb: 0 0 0;
+  --shadow-strength: 1;
+  --accent-rgb: 77 159 255;
+  --violet-rgb: 139 124 255;
+
+  --bg: #0a0e16;
+  --bg-elevated: #111824;
+  --accent: #2a6fe0;
+  --accent-strong: #174fb8;
+  --accent-ink: #7cb8ff;
+  --on-accent: #ffffff;
+  --danger: #ff8a80;
+  --chart-gross: #1f98c9;
+  --chart-invested: #8b7cff;
+  --accent-gradient: linear-gradient(90deg, #7cb8ff, #4fc3f7 50%, #8b7cff);
+
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+
+img,
+iframe {
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
