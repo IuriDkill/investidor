@@ -137,3 +137,47 @@ test('LCI/LCA não mostra imposto', async () => {
   await choose('LCI/LCA')
   expect(card('Imposto')).toHaveTextContent('0,00')
 })
+
+test.each(['Produto', 'Valor inicial', 'Aporte mensal', 'Prazo', 'Percentual do CDI', 'Total investido', 'Ganho bruto', 'Imposto', 'Valor líquido'])(
+  'explica %s',
+  (label) => {
+    render(<FixedIncomeTab />)
+    expect(screen.getByRole('button', { name: `Explicação sobre ${label}` })).toBeInTheDocument()
+  },
+)
+
+test('explica o juro real do Tesouro IPCA+', async () => {
+  render(<FixedIncomeTab />)
+  await choose('Tesouro IPCA+')
+  expect(screen.getByRole('button', { name: 'Explicação sobre Juro real anual' })).toBeInTheDocument()
+})
+
+const taxInfo = async () => {
+  await userEvent.click(screen.getByRole('button', { name: 'Explicação sobre Imposto' }))
+  return screen.getByRole('note').textContent
+}
+
+test('o imposto explica o valor inicial e os aportes do prazo escolhido', async () => {
+  render(<FixedIncomeTab />)
+  const text = await taxInfo()
+  expect(text).toMatch(/^CDB · 5 anos \(1\.800 dias\)\nImposto = rendimento × alíquota\n/)
+  expect(text).toContain('Valor inicial: 1.800 dias')
+  expect(text).toContain('35 aportes acima de 720 dias')
+  expect(text).toMatch(/\nTotal = R\$\s[\d.,]+ /)
+})
+
+test('o imposto acompanha o produto e o prazo', async () => {
+  render(<FixedIncomeTab />)
+  await choose('Tesouro Selic')
+  await replace('Aporte mensal', '0')
+  await replace('Prazo', '1')
+  expect(await taxInfo()).toMatch(
+    /^Tesouro Selic · 1 ano \(360 dias\)\nImposto = rendimento × alíquota\n\nValor inicial: 360 dias\nR\$\s[\d.,]+ × 20% = R\$\s[\d.,]+$/,
+  )
+})
+
+test('o imposto da LCI/LCA explica a isenção', async () => {
+  render(<FixedIncomeTab />)
+  await choose('LCI/LCA')
+  expect(await taxInfo()).toMatch(/^LCI\/LCA · 5 anos \(1\.800 dias\)\nIsenta de imposto de renda/)
+})

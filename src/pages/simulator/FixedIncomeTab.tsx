@@ -5,9 +5,11 @@ import GrowthChart from '@/components/GrowthChart';
 import ResultCards from '@/components/ResultCards';
 import SelectField from '@/components/SelectField';
 import { FIELD_LIMITS, RATE_DEFAULTS } from '@/config/rates';
+import { EXPLANATIONS } from '@/content/explanations';
 import { DEFAULT_ASSUMPTIONS, type Assumptions } from '@/lib/assumptions';
-import { simulateFixedIncome, type FixedIncomeProduct } from '@/lib/fixedIncome';
+import { simulateFixedIncome, type FixedIncomeInput, type FixedIncomeProduct } from '@/lib/fixedIncome';
 import { formatCurrency, formatPercent } from '@/lib/format';
+import { fixedTaxExplanation } from '@/lib/taxExplanation';
 import { parseInRange } from '@/lib/validate';
 import CommonFields from './CommonFields';
 import { commonErrors, DEFAULT_COMMON_VALUES, parseCommon } from './commonValues';
@@ -69,7 +71,7 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
     if (usesCdi && percent === null) return null;
     if (usesIpca && real === null) return null;
 
-    return simulateFixedIncome({
+    const input: FixedIncomeInput = {
       ...base,
       product,
       cdiAnnual: assumptions.cdiAnnual,
@@ -78,7 +80,9 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
       ipcaAnnual: assumptions.ipcaAnnual,
       realAnnual: (real ?? 0) / 100,
       rules: assumptions.rules,
-    });
+    };
+    const output = simulateFixedIncome(input);
+    return { ...output, taxInfo: fixedTaxExplanation(input, output) };
   }, [common, product, cdiPercent, realAnnual, usesCdi, usesIpca, assumptions]);
 
   const marketRate = () => {
@@ -133,6 +137,7 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
         </button>
         <SelectField
           label="Produto"
+          info={EXPLANATIONS.product}
           value={product}
           options={PRODUCTS}
           onChange={(value) => setProduct(value as FixedIncomeProduct)}
@@ -143,6 +148,7 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
           <>
             <Field
               label="Percentual do CDI"
+              info={EXPLANATIONS.cdiPercent}
               suffix="%"
               value={cdiPercent}
               hint={CDI_PERCENT_HINTS[product]}
@@ -155,6 +161,7 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
         {usesIpca && (
           <Field
             label="Juro real anual"
+            info={EXPLANATIONS.realAnnual}
             suffix="%"
             value={realAnnual}
             hint="7% é só um exemplo. Use a taxa oferecida."
@@ -173,10 +180,10 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
         <>
           <ResultCards
             items={[
-              { label: 'Total investido', value: formatCurrency(result.invested) },
-              { label: 'Ganho bruto', value: formatCurrency(result.grossGain) },
-              { label: 'Imposto', value: formatCurrency(result.tax) },
-              { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent' },
+              { label: 'Total investido', value: formatCurrency(result.invested), info: EXPLANATIONS.invested },
+              { label: 'Ganho bruto', value: formatCurrency(result.grossGain), info: EXPLANATIONS.grossGain },
+              { label: 'Imposto', value: formatCurrency(result.tax), info: result.taxInfo },
+              { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent', info: EXPLANATIONS.net },
             ]}
           />
           <GrowthChart series={result.series} />

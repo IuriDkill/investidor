@@ -22,6 +22,8 @@ export type VariableIncomeResult = {
   net: number;
   appreciationGain: number;
   dividends: number;
+  saleValue: number;
+  saleProfit: number;
   series: SimulationPoint[];
 };
 
@@ -66,5 +68,15 @@ export function simulateVariableIncome(input: VariableIncomeInput): VariableInco
 
   const gross = position + cash;
   const tax = saleTax(asset, position, cost, rules);
-  return { invested, grossGain: gross - invested, tax, net: gross - tax, appreciationGain, dividends, series };
+  return {
+    invested,
+    grossGain: gross - invested,
+    tax,
+    net: gross - tax,
+    appreciationGain,
+    dividends,
+    saleValue: position,
+    saleProfit: position - cost,
+    series,
+  };
 }

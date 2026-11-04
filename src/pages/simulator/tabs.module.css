@@ -70,6 +70,21 @@
     font-size: 0.85rem;
 }
 
+.checkField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-self: end;
+    min-width: 0;
+}
+
+.checkRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .check {
     display: flex;
     align-items: center;

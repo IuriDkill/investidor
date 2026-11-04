@@ -134,3 +134,12 @@ test('restaurar padrões desfaz as alterações', async () => {
   expect(modal().getByLabelText('CDI anual')).toHaveValue('13,65')
   expect(netValue()).toBe(before)
 })
+
+test.each(['CDI anual', 'Selic anual', 'IPCA anual', 'Limite de isenção em ações', 'Selic de corte'])(
+  'as premissas explicam %s',
+  async (label) => {
+    render(<SimulatorPage />)
+    await openModal()
+    expect(modal().getByRole('button', { name: `Explicação sobre ${label}` })).toBeInTheDocument()
+  },
+)

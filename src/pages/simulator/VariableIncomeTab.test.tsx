@@ -92,3 +92,35 @@ test('a explicação vem antes do formulário', () => {
   const explanation = screen.getByRole('heading', { name: 'O que é renda variável?' })
   expect(explanation.compareDocumentPosition(field('Valor inicial'))).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
 })
+
+test.each(['Ativo', 'Valorização anual esperada', 'Dividendos anuais esperados', 'Reinvestir dividendos'])(
+  'explica %s',
+  (label) => {
+    render(<VariableIncomeTab />)
+    expect(screen.getByRole('button', { name: `Explicação sobre ${label}` })).toBeInTheDocument()
+  },
+)
+
+test('explica a perda bruta', async () => {
+  render(<VariableIncomeTab />)
+  await fill('-20', '0')
+  expect(screen.getByRole('button', { name: 'Explicação sobre Perda bruta' })).toBeInTheDocument()
+})
+
+const taxInfo = async () => {
+  await userEvent.click(screen.getByRole('button', { name: 'Explicação sobre Imposto' }))
+  return screen.getByRole('note').textContent
+}
+
+test('o imposto de ações compara a venda com o limite de isenção', async () => {
+  render(<VariableIncomeTab />)
+  await fill('8', '0')
+  expect(await taxInfo()).toMatch(/^Ações · venda de tudo depois de 5 anos\n[\s\S]*≤ limite de R\$\s20\.000,00\nLucro isento/)
+})
+
+test('o imposto de FIIs explica que não há limite', async () => {
+  render(<VariableIncomeTab />)
+  await fill('8', '0')
+  await userEvent.selectOptions(field('Ativo'), 'FIIs')
+  expect(await taxInfo()).toContain('FIIs não têm limite de isenção\nImposto = lucro × alíquota')
+})

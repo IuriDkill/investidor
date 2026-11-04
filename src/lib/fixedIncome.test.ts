@@ -114,6 +114,21 @@ test('a série vai do valor inicial ao patrimônio bruto', () => {
   expect(last.gross).toBeCloseTo(r.invested + r.grossGain, 6)
 })
 
+test('informa rendimento e imposto de cada aplicação', () => {
+  const r = simulateFixedIncome({ ...base, monthly: 100, months: 7 })
+  expect(r.lots).toHaveLength(8)
+  expect(r.lots[0]).toMatchObject({ kind: 'initial', amount: 1000, age: 7, rate: 0.2 })
+  expect(r.lots[1]).toMatchObject({ kind: 'monthly', amount: 100, age: 6, rate: 0.225 })
+  expect(r.lots[7]).toMatchObject({ kind: 'monthly', age: 0, gain: 0, tax: 0 })
+  expect(r.lots.reduce((sum, lot) => sum + lot.tax, 0)).toBeCloseTo(r.tax, 9)
+  expect(r.lots.reduce((sum, lot) => sum + lot.gain, 0)).toBeCloseTo(r.grossGain, 9)
+})
+
+test('aplicações isentas têm alíquota zero', () => {
+  const r = simulateFixedIncome({ ...base, product: 'lci-lca' })
+  expect(r.lots[0]).toMatchObject({ rate: 0, tax: 0 })
+})
+
 test('o último aporte não rende', () => {
   const r = simulateFixedIncome({ ...base, initial: 0, monthly: 100, months: 1 })
   expect(r.grossGain).toBeCloseTo(0, 6)

@@ -1,5 +1,6 @@
 import Field from '@/components/Field';
 import SelectField from '@/components/SelectField';
+import { EXPLANATIONS } from '@/content/explanations';
 import type { TermUnit } from '@/lib/validate';
 import type { CommonErrors, CommonValues } from './commonValues';
 import styles from './tabs.module.css';
@@ -22,6 +23,7 @@ export default function CommonFields({ values, errors, onChange }: CommonFieldsP
     <>
       <Field
         label="Valor inicial"
+        info={EXPLANATIONS.initial}
         suffix="R$"
         value={values.initial}
         error={errors.initial}
@@ -29,13 +31,14 @@ export default function CommonFields({ values, errors, onChange }: CommonFieldsP
       />
       <Field
         label="Aporte mensal"
+        info={EXPLANATIONS.monthly}
         suffix="R$"
         value={values.monthly}
         error={errors.monthly}
         onChange={(monthly) => update({ monthly })}
       />
       <div className={styles.term}>
-        <Field label="Prazo" value={values.term} error={errors.term} onChange={(term) => update({ term })} />
+        <Field label="Prazo" info={EXPLANATIONS.term} value={values.term} error={errors.term} onChange={(term) => update({ term })} />
         <SelectField
           label="Unidade"
           value={values.unit}

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import Field from '@/components/Field';
 import { RATE_DEFAULTS, type AssumptionKey, type AssumptionValues } from '@/config/rates';
+import { EXPLANATIONS } from '@/content/explanations';
 import { isAssumptionValid } from '@/lib/assumptions';
 import styles from './style.module.css';
 
@@ -12,15 +13,15 @@ type AssumptionsModalProps = {
   onClose: () => void;
 };
 
-type Group = { title: string; fields: { key: AssumptionKey; label: string; suffix: string }[] };
+type Group = { title: string; fields: { key: AssumptionKey; label: string; suffix: string; info?: string }[] };
 
 const GROUPS: Group[] = [
   {
     title: 'Taxas de mercado (ao ano)',
     fields: [
-      { key: 'cdiAnnual', label: 'CDI anual', suffix: '%' },
-      { key: 'selicAnnual', label: 'Selic anual', suffix: '%' },
-      { key: 'ipcaAnnual', label: 'IPCA anual', suffix: '%' },
+      { key: 'cdiAnnual', label: 'CDI anual', suffix: '%', info: EXPLANATIONS.cdi },
+      { key: 'selicAnnual', label: 'Selic anual', suffix: '%', info: EXPLANATIONS.selic },
+      { key: 'ipcaAnnual', label: 'IPCA anual', suffix: '%', info: EXPLANATIONS.ipca },
     ],
   },
   {
@@ -37,13 +38,13 @@ const GROUPS: Group[] = [
     fields: [
       { key: 'stockTaxRate', label: 'Lucro em ações', suffix: '%' },
       { key: 'fiiTaxRate', label: 'Lucro em FIIs', suffix: '%' },
-      { key: 'stockExemptionLimit', label: 'Limite de isenção em ações', suffix: 'R$' },
+      { key: 'stockExemptionLimit', label: 'Limite de isenção em ações', suffix: 'R$', info: EXPLANATIONS.stockExemptionLimit },
     ],
   },
   {
     title: 'Regra da poupança',
     fields: [
-      { key: 'savingsSelicThreshold', label: 'Selic de corte', suffix: '%' },
+      { key: 'savingsSelicThreshold', label: 'Selic de corte', suffix: '%', info: EXPLANATIONS.savingsThreshold },
       { key: 'savingsMonthlyAbove', label: 'Rendimento acima do corte', suffix: '% ao mês' },
       { key: 'savingsSelicShare', label: 'Percentual da Selic até o corte', suffix: '%' },
     ],
@@ -94,11 +95,12 @@ export default function AssumptionsModal({ open, values, onChange, onReset, onCl
           <fieldset key={group.title} className={styles.group}>
             <legend className={styles.legend}>{group.title}</legend>
             <div className={styles.fields}>
-              {group.fields.map(({ key, label, suffix }) => (
+              {group.fields.map(({ key, label, suffix, info }) => (
                 <Field
                   key={key}
                   label={label}
                   suffix={suffix}
+                  info={info}
                   value={values[key]}
                   error={isAssumptionValid(key, values[key]) ? undefined : errorFor(key)}
                   onChange={(text) => onChange(key, text)}

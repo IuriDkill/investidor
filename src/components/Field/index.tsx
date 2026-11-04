@@ -1,4 +1,6 @@
 import { useId } from 'react';
+import InfoButton, { InfoBox } from '@/components/InfoButton';
+import { useInfo } from '@/components/InfoButton/useInfo';
 import styles from './style.module.css';
 
 type FieldProps = {
@@ -10,6 +12,7 @@ type FieldProps = {
   suffix?: string;
   placeholder?: string;
   inputMode?: 'decimal' | 'text';
+  info?: string;
 };
 
 export default function Field({
@@ -21,16 +24,22 @@ export default function Field({
   suffix,
   placeholder,
   inputMode = 'decimal',
+  info,
 }: FieldProps) {
   const id = useId();
+  const explanation = useInfo();
   const messageId = `${id}-message`;
   const message = error ?? hint;
 
   return (
     <div className={styles.field}>
-      <label className={styles.label} htmlFor={id}>
-        {label}
-      </label>
+      <div className={styles.labelRow}>
+        <label className={styles.label} htmlFor={id}>
+          {label}
+        </label>
+        {info && <InfoButton label={label} info={explanation} />}
+        {info && <InfoBox info={explanation}>{info}</InfoBox>}
+      </div>
       <div className={styles.control} data-invalid={error ? 'true' : undefined}>
         <input
           id={id}

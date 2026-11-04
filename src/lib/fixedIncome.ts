@@ -18,11 +18,22 @@ export type FixedIncomeInput = {
   rules?: TaxRules;
 };
 
+// Uma aplicação: o valor inicial ou um aporte, com a idade em meses no resgate.
+export type FixedIncomeLot = {
+  kind: 'initial' | 'monthly';
+  amount: number;
+  age: number;
+  gain: number;
+  rate: number;
+  tax: number;
+};
+
 export type FixedIncomeResult = {
   invested: number;
   grossGain: number;
   tax: number;
   net: number;
+  lots: FixedIncomeLot[];
   series: SimulationPoint[];
 };
 
@@ -49,10 +60,13 @@ export function simulateFixedIncome(input: FixedIncomeInput): FixedIncomeResult 
   const taxExempt = product === 'lci-lca' || product === 'poupanca';
 
   // Cada aplicação é um lote: a idade dele define a alíquota do seu rendimento.
-  const lotTax = (amount: number, age: number) =>
-    taxExempt ? 0 : amount * (Math.pow(1 + rate, age) - 1) * incomeTaxRate(age * 30, rules.irRates);
+  const lot = (kind: FixedIncomeLot['kind'], amount: number, age: number): FixedIncomeLot => {
+    const gain = amount * (Math.pow(1 + rate, age) - 1);
+    const lotRate = taxExempt ? 0 : incomeTaxRate(age * 30, rules.irRates);
+    return { kind, amount, age, gain, rate: lotRate, tax: gain * lotRate };
+  };
 
-  let tax = lotTax(initial, months);
+  const lots = [lot('initial', initial, months)];
   let invested = initial;
   let gross = initial;
   const series: SimulationPoint[] = [{ month: 0, invested, gross }];
@@ -60,9 +74,10 @@ export function simulateFixedIncome(input: FixedIncomeInput): FixedIncomeResult 
   for (let month = 1; month <= months; month++) {
     gross = gross * (1 + rate) + monthly;
     invested += monthly;
-    tax += lotTax(monthly, months - month);
+    lots.push(lot('monthly', monthly, months - month));
     series.push({ month, invested, gross });
   }
 
-  return { invested, grossGain: gross - invested, tax, net: gross - tax, series };
+  const tax = lots.reduce((sum, current) => sum + current.tax, 0);
+  return { invested, grossGain: gross - invested, tax, net: gross - tax, lots, series };
 }

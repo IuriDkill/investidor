@@ -1,0 +1,50 @@
+.button {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--accent-ink);
+    background: transparent;
+    border: 1px solid rgb(var(--accent-rgb) / 0.35);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* O "?" fica no CSS para não entrar no texto do rótulo; o nome acessível vem do aria-label. */
+.button::before {
+    content: '?';
+}
+
+.button:hover,
+.button[aria-expanded='true'] {
+    color: var(--on-accent);
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Flutua logo abaixo da linha do rótulo, sobre o conteúdo, sem empurrar a página. */
+.box {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    z-index: 20;
+    width: max-content;
+    max-width: min(18rem, calc(100vw - 1rem));
+    padding: 0.65rem 0.8rem;
+    color: var(--text);
+    background: var(--bg-elevated);
+    border: 1px solid rgb(var(--accent-rgb) / 0.35);
+    box-shadow: var(--shadow);
+    border-radius: var(--r-sm);
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.45;
+    white-space: pre-line;
+    /* Toques atravessam a caixa: um toque fecha a caixa e já ativa o que está embaixo dela. */
+    pointer-events: none;
+}

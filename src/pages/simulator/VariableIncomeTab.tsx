@@ -1,14 +1,18 @@
 import { useMemo, useState } from 'react';
 import Disclaimer from '@/components/Disclaimer';
 import Field from '@/components/Field';
+import InfoButton, { InfoBox } from '@/components/InfoButton';
+import { useInfo } from '@/components/InfoButton/useInfo';
 import GrowthChart from '@/components/GrowthChart';
 import ResultCards from '@/components/ResultCards';
 import SelectField from '@/components/SelectField';
 import { FIELD_LIMITS } from '@/config/rates';
+import { EXPLANATIONS } from '@/content/explanations';
 import { DEFAULT_ASSUMPTIONS, type Assumptions } from '@/lib/assumptions';
 import { formatCurrency } from '@/lib/format';
 import { parseInRange } from '@/lib/validate';
-import { simulateVariableIncome, type VariableAsset } from '@/lib/variableIncome';
+import { variableTaxExplanation } from '@/lib/taxExplanation';
+import { simulateVariableIncome, type VariableAsset, type VariableIncomeInput } from '@/lib/variableIncome';
 import CommonFields from './CommonFields';
 import { commonErrors, DEFAULT_COMMON_VALUES, parseCommon } from './commonValues';
 import styles from './tabs.module.css';
@@ -43,6 +47,7 @@ export default function VariableIncomeTab({
   const [appreciation, setAppreciation] = useState('');
   const [dividends, setDividends] = useState('');
   const [reinvestDividends, setReinvestDividends] = useState(true);
+  const reinvestInfo = useInfo();
 
   const result = useMemo(() => {
     const base = parseCommon(common);
@@ -51,14 +56,16 @@ export default function VariableIncomeTab({
 
     if (!base || !assumptions || appreciationValue === null || dividendValue === null) return null;
 
-    return simulateVariableIncome({
+    const input: VariableIncomeInput = {
       ...base,
       asset,
       appreciationAnnual: appreciationValue / 100,
       dividendAnnual: dividendValue / 100,
       reinvestDividends,
       rules: assumptions.rules,
-    });
+    };
+    const output = simulateVariableIncome(input);
+    return { ...output, taxInfo: variableTaxExplanation(input, output) };
   }, [common, asset, appreciation, dividends, reinvestDividends, assumptions]);
 
   const scenarioEmpty = appreciation.trim() === '' || dividends.trim() === '';
@@ -97,6 +104,7 @@ export default function VariableIncomeTab({
         </button>
         <SelectField
           label="Ativo"
+          info={EXPLANATIONS.asset}
           value={asset}
           options={ASSETS}
           onChange={(value) => setAsset(value as VariableAsset)}
@@ -104,6 +112,7 @@ export default function VariableIncomeTab({
         <CommonFields values={common} errors={commonErrors(common)} onChange={setCommon} />
         <Field
           label="Valorização anual esperada"
+          info={EXPLANATIONS.appreciation}
           suffix="%"
           placeholder="Ex.: 8"
           inputMode="text"
@@ -114,6 +123,7 @@ export default function VariableIncomeTab({
         />
         <Field
           label="Dividendos anuais esperados"
+          info={EXPLANATIONS.dividends}
           suffix="%"
           placeholder="Ex.: 6"
           hint="Percentual sobre o valor da posição."
@@ -121,28 +131,35 @@ export default function VariableIncomeTab({
           error={dividends.trim() !== '' && parseDividends(dividends) === null ? 'Informe um valor de 0 a 100.' : undefined}
           onChange={setDividends}
         />
-        <label className={styles.check}>
-          <input
-            type="checkbox"
-            checked={reinvestDividends}
-            onChange={(event) => setReinvestDividends(event.target.checked)}
-          />
-          Reinvestir dividendos
-        </label>
+        <div className={styles.checkField}>
+          <div className={styles.checkRow}>
+            <label className={styles.check}>
+              <input
+                type="checkbox"
+                checked={reinvestDividends}
+                onChange={(event) => setReinvestDividends(event.target.checked)}
+              />
+              Reinvestir dividendos
+            </label>
+            <InfoButton label="Reinvestir dividendos" info={reinvestInfo} />
+            <InfoBox info={reinvestInfo}>{EXPLANATIONS.reinvest}</InfoBox>
+          </div>
+        </div>
       </form>
 
       {result ? (
         <>
           <ResultCards
             items={[
-              { label: 'Total investido', value: formatCurrency(result.invested) },
+              { label: 'Total investido', value: formatCurrency(result.invested), info: EXPLANATIONS.invested },
               {
                 label: hasLoss ? 'Perda bruta' : 'Ganho bruto',
                 value: formatCurrency(result.grossGain),
                 tone: hasLoss ? 'negative' : 'default',
+                info: hasLoss ? EXPLANATIONS.grossLoss : EXPLANATIONS.grossGain,
               },
-              { label: 'Imposto', value: formatCurrency(result.tax) },
-              { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent' },
+              { label: 'Imposto', value: formatCurrency(result.tax), info: result.taxInfo },
+              { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent', info: EXPLANATIONS.net },
             ]}
           />
           <p className={styles.breakdown}>
