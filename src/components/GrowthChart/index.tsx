@@ -8,13 +8,53 @@ const HEIGHT = 300;
 const MARGIN = { top: 12, right: 16, bottom: 28 };
 const Y_TICKS = 4;
 
+// Cada variante tem cor e traço próprios; a ordem da legenda é a ordem das linhas.
+export type ChartLine = {
+  label: string;
+  values: number[];
+  variant: 'gross' | 'second' | 'third' | 'fourth' | 'invested' | 'reference';
+};
+
+const LINE_CLASS = {
+  gross: styles.lineGross,
+  second: styles.lineSecond,
+  third: styles.lineThird,
+  fourth: styles.lineFourth,
+  invested: styles.lineInvested,
+  reference: styles.lineReference,
+};
+const DOT_CLASS = {
+  gross: styles.dotGross,
+  second: styles.dotSecond,
+  third: styles.dotThird,
+  fourth: styles.dotFourth,
+  invested: styles.dotInvested,
+  reference: styles.dotReference,
+};
+const SWATCH_CLASS = {
+  gross: styles.swatchGross,
+  second: styles.swatchSecond,
+  third: styles.swatchThird,
+  fourth: styles.swatchFourth,
+  invested: styles.swatchInvested,
+  reference: styles.swatchReference,
+};
+
 const monthLabel = (month: number) => {
   if (month === 0) return 'Início';
   if (month % 12 !== 0) return `${month} ${month === 1 ? 'mês' : 'meses'}`;
   return `${month / 12} ${month === 12 ? 'ano' : 'anos'}`;
 };
 
-export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
+const linesFromSeries = (series: SimulationPoint[]): ChartLine[] => [
+  { label: 'Patrimônio bruto', values: series.map((point) => point.gross), variant: 'gross' },
+  { label: 'Total investido', values: series.map((point) => point.invested), variant: 'invested' },
+];
+
+type GrowthChartProps = { series: SimulationPoint[] } | { lines: ChartLine[] };
+
+export default function GrowthChart(props: GrowthChartProps) {
+  const lines = 'lines' in props ? props.lines : linesFromSeries(props.series);
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(720);
   const tooltip = useRef<HTMLDivElement>(null);
@@ -32,10 +72,11 @@ export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
     return () => observer.disconnect();
   }, []);
 
-  const gross = series.map((point) => point.gross);
-  const invested = series.map((point) => point.invested);
-  const domain = yDomain([...gross, ...invested]);
-  const months = series[series.length - 1].month;
+  const domain = yDomain(lines.flatMap((line) => line.values));
+  const months = lines[0].values.length - 1;
+  // Linhas tracejadas por baixo, para as cheias ficarem visíveis onde se cruzam.
+  const dashed = (line: ChartLine) => Number(line.variant === 'invested' || line.variant === 'reference');
+  const drawOrder = [...lines].sort((a, b) => dashed(b) - dashed(a));
 
   const yTicks = Array.from({ length: Y_TICKS + 1 }, (_, index) => (domain[1] / Y_TICKS) * index);
   const yLabels = yTicks.map(formatCompactCurrency);
@@ -53,21 +94,17 @@ export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
     setHovered(Math.round(ratio * months));
   };
 
-  const point = hovered === null ? null : series[hovered];
-
   return (
     <figure className={styles.figure}>
       <figcaption className={styles.caption}>
         <h3 className={styles.title}>Evolução do patrimônio</h3>
-        <ul className={styles.legend}>
-          <li>
-            <span className={`${styles.swatch} ${styles.swatchGross}`} />
-            Patrimônio bruto
-          </li>
-          <li>
-            <span className={`${styles.swatch} ${styles.swatchInvested}`} />
-            Total investido
-          </li>
+        <ul className={styles.legend} aria-label="Legenda">
+          {lines.map((line) => (
+            <li key={line.label}>
+              <span className={`${styles.swatch} ${SWATCH_CLASS[line.variant]}`} />
+              {line.label}
+            </li>
+          ))}
         </ul>
       </figcaption>
 
@@ -95,14 +132,28 @@ export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
               </text>
             ))}
 
-            <path className={styles.lineInvested} d={linePath(invested, plotWidth, plotHeight, domain)} />
-            <path className={styles.lineGross} d={linePath(gross, plotWidth, plotHeight, domain)} />
+            <g className={styles.lines}>
+              {drawOrder.map((line) => (
+                <path
+                  key={line.label}
+                  className={LINE_CLASS[line.variant]}
+                  d={linePath(line.values, plotWidth, plotHeight, domain)}
+                />
+              ))}
+            </g>
 
-            {point && (
+            {hovered !== null && (
               <>
-                <line className={styles.crosshair} x1={xOf(point.month)} x2={xOf(point.month)} y1={0} y2={plotHeight} />
-                <circle className={styles.dotInvested} cx={xOf(point.month)} cy={yOf(point.invested)} r={4} />
-                <circle className={styles.dotGross} cx={xOf(point.month)} cy={yOf(point.gross)} r={4} />
+                <line className={styles.crosshair} x1={xOf(hovered)} x2={xOf(hovered)} y1={0} y2={plotHeight} />
+                {drawOrder.map((line) => (
+                  <circle
+                    key={line.label}
+                    className={DOT_CLASS[line.variant]}
+                    cx={xOf(hovered)}
+                    cy={yOf(line.values[hovered])}
+                    r={4}
+                  />
+                ))}
               </>
             )}
 
@@ -117,18 +168,21 @@ export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
           </g>
         </svg>
 
-        {point && (
+        {hovered !== null && (
           <div
             ref={tooltip}
             className={styles.tooltip}
             style={{
-              left: tooltipLeft(marginLeft + xOf(point.month), tooltipWidth, width),
+              left: tooltipLeft(marginLeft + xOf(hovered), tooltipWidth, width),
               top: MARGIN.top,
             }}
           >
-            <strong>{monthLabel(point.month)}</strong>
-            <span>Patrimônio bruto: {formatCurrency(point.gross)}</span>
-            <span>Total investido: {formatCurrency(point.invested)}</span>
+            <strong>{monthLabel(hovered)}</strong>
+            {lines.map((line) => (
+              <span key={line.label}>
+                {line.label}: {formatCurrency(line.values[hovered])}
+              </span>
+            ))}
           </div>
         )}
       </div>
@@ -139,16 +193,20 @@ export default function GrowthChart({ series }: { series: SimulationPoint[] }) {
           <thead>
             <tr>
               <th scope="col">Mês</th>
-              <th scope="col">Total investido</th>
-              <th scope="col">Patrimônio bruto</th>
+              {lines.map((line) => (
+                <th key={line.label} scope="col">
+                  {line.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {series.map((row) => (
-              <tr key={row.month}>
-                <td>{row.month}</td>
-                <td>{formatCurrency(row.invested)}</td>
-                <td>{formatCurrency(row.gross)}</td>
+            {lines[0].values.map((_, month) => (
+              <tr key={month}>
+                <td>{month}</td>
+                {lines.map((line) => (
+                  <td key={line.label}>{formatCurrency(line.values[month])}</td>
+                ))}
               </tr>
             ))}
           </tbody>

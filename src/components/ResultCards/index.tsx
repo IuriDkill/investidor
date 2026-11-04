@@ -13,7 +13,10 @@ function ResultCard({ label, value, tone = 'default', info }: ResultItem) {
         {label}
         {info && <InfoButton label={label} info={explanation} />}
       </dt>
-      <dd className={styles.value}>{value}</dd>
+      {/* A chave pelo valor refaz a animação a cada novo resultado. */}
+      <dd key={value} className={styles.value}>
+        {value}
+      </dd>
       {info && explanation.open && (
         <dd className={styles.info}>
           <InfoBox info={explanation}>{info}</InfoBox>

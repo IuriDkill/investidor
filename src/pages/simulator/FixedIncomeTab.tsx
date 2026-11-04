@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Disclaimer from '@/components/Disclaimer';
 import Field from '@/components/Field';
 import GrowthChart from '@/components/GrowthChart';
@@ -8,11 +8,13 @@ import { FIELD_LIMITS, RATE_DEFAULTS } from '@/config/rates';
 import { EXPLANATIONS } from '@/content/explanations';
 import { DEFAULT_ASSUMPTIONS, type Assumptions } from '@/lib/assumptions';
 import { simulateFixedIncome, type FixedIncomeInput, type FixedIncomeProduct } from '@/lib/fixedIncome';
+import { todayValue, todayValueExplanation } from '@/lib/inflation';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import { fixedTaxExplanation } from '@/lib/taxExplanation';
 import { parseInRange } from '@/lib/validate';
+import { usePersistentState } from '@/utils/usePersistentState';
 import CommonFields from './CommonFields';
-import { commonErrors, DEFAULT_COMMON_VALUES, parseCommon } from './commonValues';
+import { commonErrors, DEFAULT_COMMON_VALUES, isCommonValues, parseCommon } from './commonValues';
 import styles from './tabs.module.css';
 
 const CDI_PERCENT_MAX = 200;
@@ -49,14 +51,16 @@ type FixedIncomeTabProps = {
 };
 
 export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOpenAssumptions }: FixedIncomeTabProps) {
-  const [common, setCommon] = useState(DEFAULT_COMMON_VALUES);
-  const [product, setProduct] = useState<FixedIncomeProduct>('cdb');
-  const [cdiPercents, setCdiPercents] = useState({
+  const [common, setCommon] = usePersistentState('fixed.common', DEFAULT_COMMON_VALUES, isCommonValues);
+  const [product, setProduct] = usePersistentState<FixedIncomeProduct>('fixed.product', 'cdb', (value) =>
+    PRODUCTS.some((option) => option.value === value),
+  );
+  const [cdiPercents, setCdiPercents] = usePersistentState('fixed.cdiPercents', {
     cdb: RATE_DEFAULTS.cdbCdiPercent,
     'lci-lca': RATE_DEFAULTS.lciCdiPercent,
     caixinha: RATE_DEFAULTS.caixinhaCdiPercent,
   });
-  const [realAnnual, setRealAnnual] = useState(RATE_DEFAULTS.realAnnual);
+  const [realAnnual, setRealAnnual] = usePersistentState('fixed.realAnnual', RATE_DEFAULTS.realAnnual);
 
   const usesCdi = product === 'cdb' || product === 'lci-lca' || product === 'caixinha';
   const usesIpca = product === 'tesouro-ipca';
@@ -82,7 +86,12 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
       rules: assumptions.rules,
     };
     const output = simulateFixedIncome(input);
-    return { ...output, taxInfo: fixedTaxExplanation(input, output) };
+    return {
+      ...output,
+      taxInfo: fixedTaxExplanation(input, output),
+      today: todayValue(output.net, assumptions.ipcaAnnual, base.months),
+      todayInfo: todayValueExplanation(output.net, assumptions.ipcaAnnual, base.months),
+    };
   }, [common, product, cdiPercent, realAnnual, usesCdi, usesIpca, assumptions]);
 
   const marketRate = () => {
@@ -184,6 +193,11 @@ export default function FixedIncomeTab({ assumptions = DEFAULT_ASSUMPTIONS, onOp
               { label: 'Ganho bruto', value: formatCurrency(result.grossGain), info: EXPLANATIONS.grossGain },
               { label: 'Imposto', value: formatCurrency(result.tax), info: result.taxInfo },
               { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent', info: EXPLANATIONS.net },
+              {
+                label: 'Em dinheiro de hoje',
+                value: formatCurrency(result.today),
+                info: result.todayInfo,
+              },
             ]}
           />
           <GrowthChart series={result.series} />

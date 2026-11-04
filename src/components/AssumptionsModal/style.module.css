@@ -10,8 +10,13 @@
     box-shadow: var(--shadow-hover);
 }
 
+.dialog[open] {
+    animation: var(--kf-pop-in) 220ms ease-out;
+}
+
 .dialog::backdrop {
     background: rgb(0 0 0 / 0.6);
+    animation: var(--kf-fade-in) 220ms ease-out;
 }
 
 .content {

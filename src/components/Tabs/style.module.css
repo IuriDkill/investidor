@@ -9,6 +9,10 @@
     border-radius: var(--r-md);
 }
 
+.panel {
+    animation: var(--kf-fade-in) 250ms ease-out;
+}
+
 .tab {
     padding: 0.8rem 1rem;
     color: var(--muted);

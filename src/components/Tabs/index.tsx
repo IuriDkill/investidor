@@ -1,11 +1,16 @@
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useId, useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { usePersistentState } from '@/utils/usePersistentState';
 import styles from './style.module.css';
 
 type Tab = { id: string; label: string; content: ReactNode };
 
-export default function Tabs({ tabs }: { tabs: Tab[] }) {
+export default function Tabs({ tabs, persistKey = 'tabs' }: { tabs: Tab[]; persistKey?: string }) {
   const baseId = useId();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = usePersistentState(
+    persistKey,
+    0,
+    (index) => Number.isInteger(index) && index >= 0 && index < tabs.length,
+  );
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
   const select = (index: number) => {
@@ -47,6 +52,7 @@ export default function Tabs({ tabs }: { tabs: Tab[] }) {
           key={tab.id}
           id={`${baseId}-panel-${tab.id}`}
           role="tabpanel"
+          className={styles.panel}
           aria-labelledby={`${baseId}-tab-${tab.id}`}
           hidden={index !== active}
         >

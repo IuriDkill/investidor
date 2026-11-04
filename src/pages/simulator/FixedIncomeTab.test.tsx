@@ -181,3 +181,10 @@ test('o imposto da LCI/LCA explica a isenção', async () => {
   await choose('LCI/LCA')
   expect(await taxInfo()).toMatch(/^LCI\/LCA · 5 anos \(1\.800 dias\)\nIsenta de imposto de renda/)
 })
+
+test('mostra o valor líquido em dinheiro de hoje, com a conta', async () => {
+  render(<FixedIncomeTab />)
+  expect(card('Em dinheiro de hoje')).toHaveTextContent(/R\$\s[\d.,]+/)
+  await userEvent.click(screen.getByRole('button', { name: 'Explicação sobre Em dinheiro de hoje' }))
+  expect(screen.getByRole('note')).toHaveTextContent(/÷ \(1 \+ 5,2%\) \^ 5 = R\$/)
+})

@@ -24,7 +24,9 @@ export default function ThemeToggle() {
 
   return (
     <button type="button" className={styles.toggle} onClick={toggle} aria-label={label} title={label}>
-      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      <span key={theme} className={styles.iconWrap}>
+        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      </span>
     </button>
   );
 }

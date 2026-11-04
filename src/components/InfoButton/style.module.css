@@ -37,7 +37,10 @@
     max-width: min(18rem, calc(100vw - 1rem));
     padding: 0.65rem 0.8rem;
     color: var(--text);
-    background: var(--bg-elevated);
+    /* Vidro desfocado, como o cabeçalho do Mundstock: o conteúdo atrás borra e o texto segue legível. */
+    background: rgb(var(--surface-rgb) / 0.7);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
     border: 1px solid rgb(var(--accent-rgb) / 0.35);
     box-shadow: var(--shadow);
     border-radius: var(--r-sm);
@@ -47,4 +50,5 @@
     white-space: pre-line;
     /* Toques atravessam a caixa: um toque fecha a caixa e já ativa o que está embaixo dela. */
     pointer-events: none;
+    animation: var(--kf-pop-in) 160ms ease-out;
 }

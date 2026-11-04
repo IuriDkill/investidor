@@ -1,55 +1,40 @@
-import { useState } from 'react';
-import AssumptionsModal from '@/components/AssumptionsModal';
+import { useEffect } from 'react';
+import { useLayoutContext } from '@/components/Layout/useLayoutContext';
+import PresetList from '@/components/PresetList';
 import Tabs from '@/components/Tabs';
-import ThemeToggle from '@/components/ThemeToggle';
-import { useAssumptions } from '@/utils/useAssumptions';
 import FixedIncomeTab from './FixedIncomeTab';
-import styles from './style.module.css';
 import VariableIncomeTab from './VariableIncomeTab';
 
 export default function SimulatorPage() {
-  const { values, assumptions, update, reset } = useAssumptions();
-  const [modalOpen, setModalOpen] = useState(false);
-  const openModal = () => setModalOpen(true);
+  const { assumptions, openAssumptions } = useLayoutContext();
+
+  useEffect(() => {
+    document.title = 'Simulador · Simulador de Investimentos';
+  }, []);
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Simulador de Investimentos</h1>
-          <p className={styles.subtitle}>Veja quanto seu dinheiro pode render, já descontando o imposto.</p>
-        </div>
-        <ThemeToggle />
-      </header>
-
-      <main>
-        <Tabs
-          tabs={[
-            {
-              id: 'renda-fixa',
-              label: 'Renda fixa',
-              content: <FixedIncomeTab assumptions={assumptions} onOpenAssumptions={openModal} />,
-            },
-            {
-              id: 'renda-variavel',
-              label: 'Renda variável',
-              content: <VariableIncomeTab assumptions={assumptions} onOpenAssumptions={openModal} />,
-            },
-          ]}
-        />
-      </main>
-
-      <AssumptionsModal
-        open={modalOpen}
-        values={values}
-        onChange={update}
-        onReset={reset}
-        onClose={() => setModalOpen(false)}
+    <>
+      <PresetList
+        path="/simulador"
+        title="Exemplos prontos"
+        lead="Comece por um caso comum e ajuste os valores depois. Os valores são só exemplos."
+        kind="Exemplo"
       />
-
-      <footer className={styles.footer}>
-        Simulação educativa. Não é recomendação de investimento, e resultado passado ou esperado não é garantia.
-      </footer>
-    </div>
+      <Tabs
+        persistKey="simulator.tab"
+        tabs={[
+          {
+            id: 'renda-fixa',
+            label: 'Renda fixa',
+            content: <FixedIncomeTab assumptions={assumptions} onOpenAssumptions={openAssumptions} />,
+          },
+          {
+            id: 'renda-variavel',
+            label: 'Renda variável',
+            content: <VariableIncomeTab assumptions={assumptions} onOpenAssumptions={openAssumptions} />,
+          },
+        ]}
+      />
+    </>
   );
 }

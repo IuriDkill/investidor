@@ -44,6 +44,23 @@
     border-color: var(--chart-gross);
 }
 
+.swatchSecond {
+    border-color: var(--chart-second);
+}
+
+.swatchThird {
+    border-color: var(--chart-third);
+}
+
+.swatchFourth {
+    border-color: var(--chart-fourth);
+}
+
+.swatchReference {
+    border-top-style: dashed;
+    border-color: var(--chart-reference);
+}
+
 .swatchInvested {
     border-top-style: dashed;
     border-color: var(--chart-invested);
@@ -59,6 +76,20 @@
     display: block;
 }
 
+/* As linhas se desenham da esquerda para a direita quando o gráfico aparece. */
+@keyframes draw-lines {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+.lines {
+    animation: draw-lines 900ms ease-out;
+}
+
 .grid {
     stroke: var(--border);
 }
@@ -70,6 +101,10 @@
 }
 
 .lineGross,
+.lineSecond,
+.lineThird,
+.lineFourth,
+.lineReference,
 .lineInvested {
     fill: none;
     stroke-width: 2;
@@ -79,6 +114,23 @@
 
 .lineGross {
     stroke: var(--chart-gross);
+}
+
+.lineSecond {
+    stroke: var(--chart-second);
+}
+
+.lineThird {
+    stroke: var(--chart-third);
+}
+
+.lineFourth {
+    stroke: var(--chart-fourth);
+}
+
+.lineReference {
+    stroke: var(--chart-reference);
+    stroke-dasharray: 6 5;
 }
 
 .lineInvested {
@@ -91,6 +143,10 @@
 }
 
 .dotGross,
+.dotSecond,
+.dotThird,
+.dotFourth,
+.dotReference,
 .dotInvested {
     stroke: var(--bg-elevated);
     stroke-width: 2;
@@ -98,6 +154,22 @@
 
 .dotGross {
     fill: var(--chart-gross);
+}
+
+.dotSecond {
+    fill: var(--chart-second);
+}
+
+.dotThird {
+    fill: var(--chart-third);
+}
+
+.dotFourth {
+    fill: var(--chart-fourth);
+}
+
+.dotReference {
+    fill: var(--chart-reference);
 }
 
 .dotInvested {

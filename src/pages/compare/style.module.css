@@ -1,0 +1,363 @@
+.sides {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+}
+
+.sideSlot {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.sideSlot > fieldset {
+    flex: 1;
+    align-self: stretch;
+}
+
+/* Selo entre os dois cartões, quando são só dois. */
+.versus {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    color: var(--muted);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 760px) {
+    .sideSlot {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+    }
+
+    .versus {
+        align-self: center;
+    }
+}
+
+.addRow {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.add {
+    padding: 0.55rem 0.95rem;
+    color: var(--accent-ink);
+    background: transparent;
+    border: 1px dashed rgb(var(--accent-rgb) / 0.5);
+    border-radius: var(--r-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: border-color 200ms ease, background-color 200ms ease;
+}
+
+.add:hover:not(:disabled) {
+    background: rgb(var(--accent-rgb) / 0.08);
+    border-style: solid;
+}
+
+.add:disabled {
+    color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.add + p {
+    grid-column: auto;
+}
+
+.side {
+    min-width: 0;
+    padding: 1rem 1.1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--chart-gross);
+    border-radius: var(--r-md);
+}
+
+/* A cor de cada lado é a mesma da linha dele no gráfico. */
+.side {
+    position: relative;
+}
+
+.side[data-side='2'] {
+    border-top-color: var(--chart-second);
+}
+
+.side[data-side='3'] {
+    border-top-color: var(--chart-third);
+}
+
+.side[data-side='4'] {
+    border-top-color: var(--chart-fourth);
+}
+
+.remove {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    transition: color 200ms ease, border-color 200ms ease;
+}
+
+.remove:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.removeIcon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.sideLegend {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    padding: 0 0.4rem;
+}
+
+/* A ordem fica numa bolinha com a cor da linha do lado no gráfico. */
+.order {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    color: #fff;
+    background: var(--chart-gross);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.side[data-side='2'] .order {
+    background: var(--chart-second);
+}
+
+.side[data-side='3'] .order {
+    background: var(--chart-third);
+}
+
+.side[data-side='4'] .order {
+    background: var(--chart-fourth);
+}
+
+.sideTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.sideFields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    align-items: start;
+    gap: 1rem;
+}
+
+.verdict {
+    padding: 1rem 1.25rem;
+    color: var(--on-accent);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-radius: var(--r-md);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.tableWrap {
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.caption {
+    padding: 1rem 1.25rem 0.25rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.table th,
+.table td {
+    padding: 0.8rem 1.25rem;
+    border-top: 1px solid var(--border);
+    text-align: left;
+}
+
+.table thead th,
+.table thead td {
+    border-top: 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.table tbody th {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.table td {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.table tr[data-row='net'] td {
+    font-size: 1.15rem;
+}
+
+/* A coluna do investimento mais vantajoso ganha fundo, selo e o valor líquido em destaque. */
+.table th[data-winner],
+.table td[data-winner] {
+    background: rgb(var(--accent-rgb) / 0.1);
+}
+
+.table thead th[data-winner] {
+    color: var(--accent-ink);
+    font-weight: 700;
+    border-top-left-radius: var(--r-sm);
+    border-top-right-radius: var(--r-sm);
+}
+
+.badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.15rem 0.55rem;
+    color: var(--on-accent);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-radius: 999px;
+    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    vertical-align: middle;
+    animation: var(--kf-pop-in) 250ms ease-out;
+}
+
+.table tr[data-row='net'] td[data-winner] {
+    color: var(--accent-ink);
+    font-size: 1.35rem;
+    box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.lead {
+    display: block;
+    margin-top: 0.15rem;
+    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.table td[data-negative] {
+    color: var(--danger);
+}
+
+.settle {
+    display: inline-block;
+    animation: var(--kf-settle) 300ms ease-out;
+}
+
+.cellRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.cellRow > div[role='note'] {
+    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* Em telas estreitas, o nome da linha vai para cima e os dois valores ficam lado a lado. */
+@media (max-width: 480px) {
+    .table tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .table thead td {
+        display: none;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.55rem 0.75rem;
+    }
+
+    .table tbody th {
+        grid-column: 1 / -1;
+        padding-bottom: 0;
+    }
+
+    .table tbody td {
+        border-top: 0;
+        font-size: 0.9rem;
+        overflow-wrap: normal;
+        white-space: nowrap;
+    }
+
+    .table tr[data-row='net'] td {
+        font-size: 1rem;
+    }
+
+    .table tr[data-row='net'] td[data-winner] {
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        display: table;
+        margin: 0.3rem 0 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .table:not([data-count='2']) thead {
+        display: none;
+    }
+
+    .table:not([data-count='2']) tbody td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 0.15rem;
+        color: var(--muted);
+        font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+        font-size: 0.7rem;
+        font-weight: 500;
+        white-space: normal;
+    }
+}

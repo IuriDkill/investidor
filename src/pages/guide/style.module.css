@@ -1,0 +1,121 @@
+.step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.3rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--r-md);
+}
+
+.stepTitle {
+    font-size: 1.15rem;
+    line-height: 1.25;
+}
+
+.stepBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-left: 1.1rem;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.action {
+    padding: 0.55rem 0.95rem;
+    color: var(--on-accent);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border: 0;
+    border-radius: var(--r-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: filter 200ms ease;
+}
+
+.action:hover {
+    filter: brightness(1.1);
+}
+
+.tableWrap {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.caption {
+    padding: 0.75rem 1rem 0.25rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.table th,
+.table td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.table thead th {
+    border-top: 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.table tbody th {
+    font-weight: 600;
+}
+
+.note {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+/* Em telas estreitas, cada produto vira um bloco com os itens rotulados. */
+@media (max-width: 600px) {
+    .step {
+        padding: 1.1rem;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tr {
+        display: block;
+        padding: 0.6rem 0.9rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .table th,
+    .table td {
+        display: block;
+        padding: 0.15rem 0;
+        border-top: 0;
+    }
+
+    .table td::before {
+        content: attr(data-label) ': ';
+        color: var(--muted);
+        font-weight: 500;
+    }
+}

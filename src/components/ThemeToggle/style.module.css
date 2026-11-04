@@ -16,6 +16,11 @@
     border-color: var(--accent-ink);
 }
 
+.iconWrap {
+    display: inline-grid;
+    animation: var(--kf-spin-in) 350ms ease-out;
+}
+
 .icon {
     width: 1.25rem;
     height: 1.25rem;

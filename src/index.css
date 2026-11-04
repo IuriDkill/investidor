@@ -64,6 +64,10 @@ body {
   --danger: #c2352b;
   --chart-gross: #1a8fd0;
   --chart-invested: #6254d6;
+  --chart-second: #d97706;
+  --chart-third: #c2185b;
+  --chart-fourth: #6254d6;
+  --chart-reference: #6b7280;
   --accent-gradient: linear-gradient(90deg, #1a56c4, #1a8fd0 50%, #6254d6);
 
 
@@ -95,6 +99,10 @@ body {
   --danger: #ff8a80;
   --chart-gross: #1f98c9;
   --chart-invested: #8b7cff;
+  --chart-second: #c9822a;
+  --chart-third: #d55181;
+  --chart-fourth: #8b7cff;
+  --chart-reference: #9aa3b2;
   --accent-gradient: linear-gradient(90deg, #7cb8ff, #4fc3f7 50%, #8b7cff);
 
 }
@@ -120,8 +128,85 @@ iframe {
   max-width: 100%;
 }
 
+/* Animações compartilhadas: curtas e discretas, para não atrapalhar quem está digitando. */
+/* Os CSS Modules renomeiam nomes de animação; via variável, o nome global chega intacto aos módulos. */
+:root {
+  --kf-rise-in: rise-in;
+  --kf-fade-in: fade-in;
+  --kf-pop-in: pop-in;
+  --kf-settle: settle;
+  --kf-spin-in: spin-in;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Um valor recalculado "assenta" no lugar. */
+@keyframes settle {
+  from {
+    opacity: 0.35;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spin-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

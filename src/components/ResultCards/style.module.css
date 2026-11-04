@@ -11,6 +11,21 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--r-md);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+}
+
+/* O hover vira uma camada própria: o cartão sobe acima dos vizinhos e do gráfico,
+   para a caixa de explicação dele continuar por cima. */
+.card:hover,
+.card:focus-within {
+    z-index: 1;
 }
 
 .card[data-tone='accent'] {
@@ -46,6 +61,7 @@
 }
 
 .value {
+    animation: var(--kf-settle) 300ms ease-out;
     margin-top: 0.2rem;
     font-family: var(--font-mono);
     font-size: 1.25rem;

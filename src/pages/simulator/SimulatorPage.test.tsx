@@ -1,6 +1,6 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import SimulatorPage from '.'
+import { renderApp } from '@/test/renderApp'
 
 const modal = () => within(screen.getByRole('dialog', { name: 'Premissas' }))
 const openModal = () => userEvent.click(screen.getByRole('button', { name: 'Premissas' }))
@@ -18,12 +18,12 @@ beforeEach(() => {
 })
 
 test('o modal começa fechado', () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 })
 
 test('o botão fica acima do produto e abre o modal', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   const button = screen.getByRole('button', { name: 'Premissas' })
   const product = within(screen.getByRole('tabpanel')).getByLabelText('Produto')
   expect(button.compareDocumentPosition(product)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
@@ -32,7 +32,7 @@ test('o botão fica acima do produto e abre o modal', async () => {
 })
 
 test('a renda variável abre o mesmo modal, com o botão acima do ativo', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await userEvent.click(screen.getByRole('tab', { name: 'Renda variável' }))
   const button = screen.getByRole('button', { name: 'Premissas' })
   const asset = within(screen.getByRole('tabpanel')).getByLabelText('Ativo')
@@ -42,28 +42,28 @@ test('a renda variável abre o mesmo modal, com o botão acima do ativo', async 
 })
 
 test('o botão de fechar fecha o modal', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await openModal()
   await userEvent.click(modal().getByRole('button', { name: 'Fechar' }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 })
 
 test('clicar fora do conteúdo fecha o modal', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await openModal()
   await userEvent.click(screen.getByRole('dialog', { name: 'Premissas' }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 })
 
 test('clicar em um campo não fecha o modal', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await openModal()
   await userEvent.click(modal().getByLabelText('CDI anual'))
   expect(screen.getByRole('dialog', { name: 'Premissas' })).toBeInTheDocument()
 })
 
 test('todas as premissas ficam editáveis', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await openModal()
   for (const label of [
     'CDI anual',
@@ -85,7 +85,7 @@ test('todas as premissas ficam editáveis', async () => {
 })
 
 test('mudar o CDI recalcula a renda fixa', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   const before = netValue()
   await openModal()
   await replace(modal().getByLabelText('CDI anual'), '5')
@@ -94,7 +94,7 @@ test('mudar o CDI recalcula a renda fixa', async () => {
 })
 
 test('mudar uma alíquota recalcula o imposto', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   const before = netValue()
   await openModal()
   await replace(modal().getByLabelText('Acima de 720 dias'), '0')
@@ -103,7 +103,7 @@ test('mudar uma alíquota recalcula o imposto', async () => {
 })
 
 test('mudar a regra de ações recalcula a renda variável', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await userEvent.click(screen.getByRole('tab', { name: 'Renda variável' }))
   const tab = within(screen.getByRole('tabpanel'))
   await userEvent.type(tab.getByLabelText('Valorização anual esperada'), '8')
@@ -116,7 +116,7 @@ test('mudar a regra de ações recalcula a renda variável', async () => {
 })
 
 test('premissa inválida marca o campo e oculta o resultado', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   await openModal()
   await replace(modal().getByLabelText('Selic anual'), '200')
   expect(modal().getByLabelText('Selic anual')).toHaveAttribute('aria-invalid', 'true')
@@ -126,7 +126,7 @@ test('premissa inválida marca o campo e oculta o resultado', async () => {
 })
 
 test('restaurar padrões desfaz as alterações', async () => {
-  render(<SimulatorPage />)
+  renderApp('/simulador')
   const before = netValue()
   await openModal()
   await replace(modal().getByLabelText('CDI anual'), '5')
@@ -138,7 +138,7 @@ test('restaurar padrões desfaz as alterações', async () => {
 test.each(['CDI anual', 'Selic anual', 'IPCA anual', 'Limite de isenção em ações', 'Selic de corte'])(
   'as premissas explicam %s',
   async (label) => {
-    render(<SimulatorPage />)
+    renderApp('/simulador')
     await openModal()
     expect(modal().getByRole('button', { name: `Explicação sobre ${label}` })).toBeInTheDocument()
   },

@@ -4,6 +4,29 @@
     gap: 1.25rem;
 }
 
+/* Ao mostrar a aba ou a página, as seções sobem em cascata. O preenchimento "backwards" só vale
+   antes do início: depois do fim a seção não vira uma camada própria, que cobriria as caixas
+   de explicação flutuando sobre a seção seguinte. */
+.tab > * {
+    animation: var(--kf-rise-in) 450ms ease-out backwards;
+}
+
+.tab > :nth-child(2) {
+    animation-delay: 60ms;
+}
+
+.tab > :nth-child(3) {
+    animation-delay: 120ms;
+}
+
+.tab > :nth-child(4) {
+    animation-delay: 180ms;
+}
+
+.tab > :nth-child(n + 5) {
+    animation-delay: 240ms;
+}
+
 .intro,
 .form {
     padding: 1.4rem 1.5rem;

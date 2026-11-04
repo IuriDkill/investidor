@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Disclaimer from '@/components/Disclaimer';
 import Field from '@/components/Field';
 import InfoButton, { InfoBox } from '@/components/InfoButton';
@@ -9,12 +9,14 @@ import SelectField from '@/components/SelectField';
 import { FIELD_LIMITS } from '@/config/rates';
 import { EXPLANATIONS } from '@/content/explanations';
 import { DEFAULT_ASSUMPTIONS, type Assumptions } from '@/lib/assumptions';
+import { todayValue, todayValueExplanation } from '@/lib/inflation';
 import { formatCurrency } from '@/lib/format';
 import { parseInRange } from '@/lib/validate';
+import { usePersistentState } from '@/utils/usePersistentState';
 import { variableTaxExplanation } from '@/lib/taxExplanation';
 import { simulateVariableIncome, type VariableAsset, type VariableIncomeInput } from '@/lib/variableIncome';
 import CommonFields from './CommonFields';
-import { commonErrors, DEFAULT_COMMON_VALUES, parseCommon } from './commonValues';
+import { commonErrors, DEFAULT_COMMON_VALUES, isCommonValues, parseCommon } from './commonValues';
 import styles from './tabs.module.css';
 
 const ASSETS: { value: VariableAsset; label: string }[] = [
@@ -42,11 +44,13 @@ export default function VariableIncomeTab({
   assumptions = DEFAULT_ASSUMPTIONS,
   onOpenAssumptions,
 }: VariableIncomeTabProps) {
-  const [common, setCommon] = useState(DEFAULT_COMMON_VALUES);
-  const [asset, setAsset] = useState<VariableAsset>('acoes');
-  const [appreciation, setAppreciation] = useState('');
-  const [dividends, setDividends] = useState('');
-  const [reinvestDividends, setReinvestDividends] = useState(true);
+  const [common, setCommon] = usePersistentState('variable.common', DEFAULT_COMMON_VALUES, isCommonValues);
+  const [asset, setAsset] = usePersistentState<VariableAsset>('variable.asset', 'acoes', (value) =>
+    ASSETS.some((option) => option.value === value),
+  );
+  const [appreciation, setAppreciation] = usePersistentState('variable.appreciation', '');
+  const [dividends, setDividends] = usePersistentState('variable.dividends', '');
+  const [reinvestDividends, setReinvestDividends] = usePersistentState('variable.reinvest', true);
   const reinvestInfo = useInfo();
 
   const result = useMemo(() => {
@@ -65,7 +69,12 @@ export default function VariableIncomeTab({
       rules: assumptions.rules,
     };
     const output = simulateVariableIncome(input);
-    return { ...output, taxInfo: variableTaxExplanation(input, output) };
+    return {
+      ...output,
+      taxInfo: variableTaxExplanation(input, output),
+      today: todayValue(output.net, assumptions.ipcaAnnual, base.months),
+      todayInfo: todayValueExplanation(output.net, assumptions.ipcaAnnual, base.months),
+    };
   }, [common, asset, appreciation, dividends, reinvestDividends, assumptions]);
 
   const scenarioEmpty = appreciation.trim() === '' || dividends.trim() === '';
@@ -160,6 +169,11 @@ export default function VariableIncomeTab({
               },
               { label: 'Imposto', value: formatCurrency(result.tax), info: result.taxInfo },
               { label: 'Valor líquido', value: formatCurrency(result.net), tone: 'accent', info: EXPLANATIONS.net },
+              {
+                label: 'Em dinheiro de hoje',
+                value: formatCurrency(result.today),
+                info: result.todayInfo,
+              },
             ]}
           />
           <p className={styles.breakdown}>

@@ -1,0 +1,131 @@
+.page {
+    /* Largo o bastante para quatro investimentos lado a lado na comparação em telas de 1280px. */
+    width: min(1320px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2rem 0 2.5rem;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.title {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: clamp(1.8rem, 5vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    margin-top: 0.5rem;
+    color: var(--muted);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.nav {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: rgb(var(--surface-rgb) / 0.88);
+    border: 1px solid rgb(var(--accent-rgb) / 0.16);
+    border-radius: var(--r-sm);
+}
+
+.navLink {
+    padding: 0.5rem 0.85rem;
+    color: var(--muted);
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 200ms ease, color 200ms ease;
+}
+
+.navLink:hover {
+    color: var(--text);
+}
+
+.navLink[aria-current='page'] {
+    color: var(--on-accent);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+}
+
+/* Em telas estreitas, o menu ocupa a linha toda e os links dividem o espaço por igual. */
+@media (max-width: 480px) {
+    .actions {
+        width: 100%;
+    }
+
+    .nav {
+        flex: 1 1 100%;
+    }
+
+    .navLink {
+        display: grid;
+        flex: 1;
+        place-items: center;
+        padding: 0.45rem 0.35rem;
+        font-size: 0.82rem;
+        line-height: 1.2;
+        text-align: center;
+    }
+}
+
+.route {
+    animation: var(--kf-rise-in) 350ms ease-out backwards;
+}
+
+.share {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.45rem;
+    height: 2.75rem;
+    padding: 0 0.9rem;
+    color: var(--text);
+    background: rgb(var(--surface-rgb) / 0.88);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: var(--r-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: border-color 200ms ease, color 200ms ease;
+}
+
+.share:hover {
+    color: var(--accent-ink);
+    border-color: var(--accent-ink);
+}
+
+.shareIcon {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.actions {
+    flex-wrap: wrap;
+}
+
+.footer {
+    margin-top: 2rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}

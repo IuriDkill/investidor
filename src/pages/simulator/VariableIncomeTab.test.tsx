@@ -124,3 +124,9 @@ test('o imposto de FIIs explica que não há limite', async () => {
   await userEvent.selectOptions(field('Ativo'), 'FIIs')
   expect(await taxInfo()).toContain('FIIs não têm limite de isenção\nImposto = lucro × alíquota')
 })
+
+test('mostra o valor líquido em dinheiro de hoje', async () => {
+  render(<VariableIncomeTab />)
+  await fill('8', '6')
+  expect(card('Em dinheiro de hoje')).toHaveTextContent(/R\$\s[\d.,]+/)
+})
