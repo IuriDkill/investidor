@@ -28,4 +28,16 @@ export const EXPLANATIONS = {
     'Em ações, quem vende até esse valor no mês não paga imposto sobre o lucro. O simulador considera uma única venda no fim do prazo.',
   savingsThreshold:
     'A poupança tem duas regras: com a Selic acima desse corte, rende um valor fixo ao mês; até o corte, rende um percentual da Selic.',
+  salary: 'O que cai na sua conta por mês, já com os descontos de INSS, imposto de renda e benefícios.',
+  essentials:
+    'Gastos que não dá para cortar no curto prazo: moradia, contas de luz, água e internet, mercado, transporte e saúde. Sem esse valor, o cálculo considera metade do salário.',
+  debtPayments: 'Soma das parcelas que você paga todo mês: empréstimos, financiamentos e compras parceladas.',
+  expensiveDebt:
+    'O rotativo do cartão e o cheque especial cobram alguns dos juros mais altos do mercado. Enquanto existirem, quitá-los rende mais do que investir.',
+  reserveCurrent: 'Quanto você já tem guardado para emergências, num lugar que dá para resgatar no mesmo dia.',
+  budgetEssentials: 'Gastos essenciais informados ou, sem eles, 50% do salário, como na regra 50/30/20.',
+  budgetWants:
+    'O que sobra para lazer, compras e outros desejos depois dos essenciais, das parcelas e do investimento.',
+  budgetInvest:
+    'Pelo menos 20% do salário, como na regra 50/30/20. Se os essenciais forem baixos, o que passar de 30% de desejos também vai para investir.',
 };

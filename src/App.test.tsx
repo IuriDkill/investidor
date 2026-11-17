@@ -13,7 +13,7 @@ test('a página inicial é o guia, e o menu leva às outras páginas', () => {
   renderApp('/')
   expect(screen.getByRole('heading', { level: 2, name: 'Por onde começar' })).toBeInTheDocument()
   const links = nav().getAllByRole('link')
-  expect(links.map((link) => link.textContent)).toEqual(['Por onde começar', 'Simulador', 'Comparar'])
+  expect(links.map((link) => link.textContent)).toEqual(['Por onde começar', 'Meu orçamento', 'Simulador', 'Comparar'])
   expect(nav().getByRole('link', { name: 'Por onde começar' })).toHaveAttribute('aria-current', 'page')
   expect(nav().getByRole('link', { name: 'Simulador' })).toHaveAttribute('href', '/simulador')
   expect(nav().getByRole('link', { name: 'Comparar' })).toHaveAttribute('href', '/comparar')

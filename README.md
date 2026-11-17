@@ -5,6 +5,7 @@ Site para iniciantes que simula investimentos e mostra quanto sobra no fim, já 
 ## Páginas
 
 - **Por onde começar** (`/`, página inicial): guia em seis passos, como reserva de emergência, objetivos, risco, liquidez e garantia, com botões que abrem simulações prontas.
+- **Meu orçamento** (`/orcamento`): a partir do salário líquido, e opcionalmente de gastos essenciais, parcelas, dívida cara e reserva atual, sugere a divisão do salário (regra 50/30/20 adaptada), quanto investir por mês, o andamento da reserva de emergência e conselhos em ordem de prioridade. Os dados não são salvos nem vão no link compartilhado.
 - **Simulador** (`/simulador`): exemplos prontos no topo e abas de renda fixa (CDB, LCI/LCA, caixinha, Tesouro Selic, Tesouro IPCA+ e poupança) e renda variável (ações e FIIs), cada uma com uma explicação no início.
 - **Comparar** (`/comparar`): de 2 a 4 investimentos lado a lado, com o mesmo valor inicial, aporte e prazo. Mostra qual deixa mais dinheiro, uma tabela com o mais vantajoso em destaque e o gráfico de todos.
 
@@ -55,6 +56,7 @@ src/
   ├── lib/                # Cálculos, impostos, inflação, comparação e validação, sem React
   ├── pages/
   │   ├── guide/          # Página inicial: guia "Por onde começar"
+  │   ├── budget/         # Meu orçamento: divisão do salário e conselhos
   │   ├── simulator/      # Página do simulador e suas abas
   │   └── compare/        # Página de comparação
   └── utils/              # Tema, premissas, estado entre páginas e link compartilhado

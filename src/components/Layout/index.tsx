@@ -12,6 +12,7 @@ import styles from './style.module.css';
 
 const PAGES = [
   { to: '/', label: 'Por onde começar' },
+  { to: '/orcamento', label: 'Meu orçamento' },
   { to: '/simulador', label: 'Simulador' },
   { to: '/comparar', label: 'Comparar' },
 ];

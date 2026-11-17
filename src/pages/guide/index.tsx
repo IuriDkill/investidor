@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { useLayoutContext } from '@/components/Layout/useLayoutContext';
 import { presetById } from '@/content/presets';
 import tabStyles from '../simulator/tabs.module.css';
@@ -53,7 +54,14 @@ export default function GuidePage() {
         </p>
       </section>
 
-      <Step title="1. Organize as contas">
+      <Step
+        title="1. Organize as contas"
+        actions={
+          <Link to="/orcamento" className={styles.action}>
+            Monte seu orçamento
+          </Link>
+        }
+      >
         <p>
           Antes de investir, gaste menos do que ganha e anote para onde vai o dinheiro. Se tiver dívidas caras, como
           rotativo do cartão ou cheque especial, quite-as primeiro: os juros delas costumam ser muito maiores do que

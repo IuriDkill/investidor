@@ -69,8 +69,11 @@
         width: 100%;
     }
 
+    /* Quatro links: grade 2×2. */
     .nav {
+        display: grid;
         flex: 1 1 100%;
+        grid-template-columns: 1fr 1fr;
     }
 
     .navLink {
